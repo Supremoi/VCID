@@ -1,11 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request
-from werkzeug.urls import url_parse
+from urllib.parse import urlsplit
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
 from flask_login import login_user, current_user
 from flask_login import logout_user
 from flask_login import login_required
+
 
 
 @app.route('/')
@@ -39,7 +40,7 @@ def login():
 
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next') 
-        if not next_page or url_parse(next_page).netloc != '':
+        if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
 
@@ -66,3 +67,19 @@ def register():
         return redirect(url_for('login'))
     # Route /register wurde mit GET betreten
     return render_template('register.html', title='Register', form=form)
+
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts)
+
+
+
+
+
