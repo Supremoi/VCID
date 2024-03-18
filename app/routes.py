@@ -15,24 +15,23 @@ from flask_login import login_required
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(content=form.post.data, author=current_user)
+        post = Post(content=form.post.data, user_id=current_user.id)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template("index.html", title='Home Page', form=form,
-                           posts=posts)
+    posts = current_user.following_posts().all()
 
+    #Debugging: Ausgabe der Posts und ihrer Autoren in der Konsole
+    for post in posts:
+        if isinstance(post, Post):
+            print(f'Post ID: {post.id}, Content: {post.content}, Author: {post.author.username}')
+        else:
+            print(f'Unexpected object in posts: {post}, Type: {type(post)}')
+
+
+    return render_template("index.html", title='Home Page', form=form, posts=posts)
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -49,7 +48,7 @@ def login():
         next_page = request.args.get('next') 
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('index')
-        return redirect(next_page)
+            return redirect(next_page)
 
     return render_template('login.html', title='Sign In', form=form)
 

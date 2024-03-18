@@ -71,7 +71,7 @@ class User(UserMixin, db.Model):
         own_posts = Post.query.filter_by(user_id=self.id)
         return followed_posts.union(own_posts).order_by(Post.timestamp.desc())
     
-
+          
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -86,8 +86,9 @@ comments = db.relationship('Comment', backref='commenter', lazy='dynamic')
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('user.id'))  # Achten Sie auf den korrekten Fremdschlüssel
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Achten Sie auf den korrekten Fremdschlüssel
     content = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=lambda: datetime.now(timezone.utc))
     
         # Repräsentationsmethode
     def __repr__(self):
