@@ -3,6 +3,7 @@ from urllib.parse import urlsplit
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, EmptyForm
 from app.models import User, Post
+from sqlalchemy import select
 from flask_login import login_user, current_user
 from flask_login import logout_user
 from flask_login import login_required
@@ -143,5 +144,11 @@ def unfollow(username):
     else:
         return redirect(url_for('index'))
 
+@app.route('/explore')
+@login_required
+def explore():
+    query = select(Post).order_by(Post.timestamp.desc())
+    posts = db.session.scalars(query).all()
+    return render_template('index.html', title='Explore', posts=posts)
 
 
