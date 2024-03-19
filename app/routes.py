@@ -14,6 +14,7 @@ from flask_login import login_required
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    page = request.args.get('page', 1, type=int)  # Hole die aktuelle Seitenzahl
     form = PostForm()
     if form.validate_on_submit():
         post = Post(content=form.post.data, user_id=current_user.id)
@@ -21,18 +22,10 @@ def index():
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
-    posts = current_user.following_posts().all()
+    pagination = current_user.following_posts(page, per_page=20)  # Verwende die Paginierung
+    posts = pagination.items  # Nutze .items, um die Posts der aktuellen Seite zu erhalten
+    return render_template("index.html", title='Home Page', form=form, posts=posts, pagination=pagination)
 
-    #Debugging: Ausgabe der Posts und ihrer Autoren in der Konsole
-    for post in posts:
-        if isinstance(post, Post):
-            print(f'Post ID: {post.id}, Content: {post.content}, Author: {post.author.username}')
-        else:
-            print(f'Unexpected object in posts: {post}, Type: {type(post)}')
-
-
-    return render_template("index.html", title='Home Page', form=form, posts=posts)
-    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -80,12 +73,11 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    page = request.args.get('page', 1, type=int)  # Holen der Seitennummer aus der URL
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(page=page, per_page=5, error_out=False)
     form = EmptyForm()
-    return render_template('user.html', user=user, posts=posts, form=form)
+    return render_template('user.html', user=user, posts=posts.items, pagination=posts, form=form)
+
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required

@@ -1,37 +1,40 @@
-<!-- app/template/user.html -->
 {% extends "base.html" %}
 
 {% block content %}
-    <table>
-        <tr valign="top">
-            <td><img src="{{ user.avatar(128) }}"></td>
-            <h1>User: {{ user.username }}</h1>
-            {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-            {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ user.avatar(128) }}" class="img-thumbnail">
+        </div>
+        <div class="col-md-8">
+            <h1>{{ user.username }}</h1>
+            {% if user.about_me %}
+                <p>{{ user.about_me }}</p>
+            {% endif %}
+            {% if user.last_seen %}
+                <p>Last seen on: {{ user.last_seen.strftime('%Y-%m-%d %H:%M') }}</p>
+            {% endif %}
             <p>{{ user.followers_count() }} followers, {{ user.following_count() }} following.</p>
             {% if user == current_user %}
-            <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                <p><a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary">Edit your profile</a></p>
             {% elif not current_user.is_following(user) %}
-            <p>
                 <form action="{{ url_for('follow', username=user.username) }}" method="post">
                     {{ form.hidden_tag() }}
-                    {{ form.submit(value='Follow') }}
+                    <button type="submit" class="btn btn-primary">Follow</button>
                 </form>
-            </p>
             {% else %}
-            <p>
                 <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
                     {{ form.hidden_tag() }}
-                    {{ form.submit(value='Unfollow') }}
+                    <button type="submit" class="btn btn-warning">Unfollow</button>
                 </form>
-            </p>
             {% endif %}
-        </tr>
-    </table>
+        </div>
+    </div>
     <hr>
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
+</div>
 {% endblock %}
 
 

@@ -64,12 +64,13 @@ class User(UserMixin, db.Model):
     def following_count(self):
         return self.followed.count()
 
-    def following_posts(self):
+    def following_posts(self, page, per_page=20):
         followed_posts = Post.query.join(
             followers, (followers.c.followed_id == Post.user_id)
         ).filter(followers.c.follower_id == self.id)
         own_posts = Post.query.filter_by(user_id=self.id)
-        return followed_posts.union(own_posts).order_by(Post.timestamp.desc())
+        return followed_posts.union(own_posts).order_by(Post.timestamp.desc()).paginate(page=page, per_page=per_page, error_out=False)
+
     
           
 @login.user_loader

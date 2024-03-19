@@ -1,21 +1,49 @@
 {% extends "base.html" %}
-
 {% block content %}
+<div class="container mt-4">
     <h1>Hi, {{ current_user.username }}!</h1>
     {% if form %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }} 
-        {{ form.post.label }}<br>
-        {{ form.post(cols=32, rows=4) }}<br>
-        {% for error in form.post.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-        <p>{{ form.submit() }}</p> 
-    </form>
+    <div class="mt-3 mb-3">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.post.label(class="form-label") }}
+                {{ form.post(class="form-control", rows=4) }}
+                {% if form.post.errors %}
+                    <div class="invalid-feedback" style="display:block;">
+                        {% for error in form.post.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+    </div>
     {% endif %}
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if posts.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('index', page=posts.prev_num) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('index', page=posts.next_num) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endblock %}
 
 
