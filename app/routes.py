@@ -76,10 +76,12 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    page = request.args.get('page', 1, type=int)  # Holen der Seitennummer aus der URL
+    page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(page=page, per_page=5, error_out=False)
-    form = EmptyForm()
-    return render_template('user.html', user=user, posts=posts.items, pagination=posts, form=form)
+    form = EmptyForm()  # Vermutlich für das Folgen/Entfolgen
+    rating_form = RatingForm()  # Erstelle eine Instanz von RatingForm
+    return render_template('user.html', user=user, posts=posts.items, pagination=posts, form=form, rating_form=rating_form)
+
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -142,9 +144,10 @@ def unfollow(username):
 @app.route('/explore')
 @login_required
 def explore():
-    query = select(Post).order_by(Post.timestamp.desc())
-    posts = db.session.scalars(query).all()
-    return render_template('index.html', title='Explore', posts=posts)
+    page = request.args.get('page', 1, type=int)  # Hole die aktuelle Seitenzahl
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(page=page, per_page=20)
+    rating_form = RatingForm()
+    return render_template('index.html', title='Explore', posts=posts.items, pagination=posts, rating_form=rating_form)
 
 @app.route('/rate_post/<int:post_id>', methods=['POST'])
 @login_required
