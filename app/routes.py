@@ -1,12 +1,14 @@
 from flask import render_template, flash, redirect, url_for, request
 from urllib.parse import urlsplit
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, EmptyForm
-from app.models import User, Post
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, EmptyForm, RatingForm
+from app.models import User, Post, Rating
 from sqlalchemy import select
 from flask_login import login_user, current_user
 from flask_login import logout_user
 from flask_login import login_required
+
+
 
 
 
@@ -24,7 +26,8 @@ def index():
         return redirect(url_for('index'))
     pagination = current_user.following_posts(page, per_page=20)  # Verwende die Paginierung
     posts = pagination.items  # Nutze .items, um die Posts der aktuellen Seite zu erhalten
-    return render_template("index.html", title='Home Page', form=form, posts=posts, pagination=pagination)
+    rating_form = RatingForm()
+    return render_template("index.html", title='Home Page', form=form, rating_form=rating_form, posts=posts, pagination=pagination)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -143,4 +146,16 @@ def explore():
     posts = db.session.scalars(query).all()
     return render_template('index.html', title='Explore', posts=posts)
 
+@app.route('/rate_post/<int:post_id>', methods=['POST'])
+@login_required
+def rate_post(post_id):
+    form = RatingForm()
+    if form.validate_on_submit():
+        rating = Rating(user_id=current_user.id, post_id=post_id, rating=form.rating.data)
+        db.session.add(rating)
+        db.session.commit()
+        flash('Your rating has been submitted.')
+    else:
+        flash('There was an error with your rating.')
+    return redirect(url_for('index'))
 

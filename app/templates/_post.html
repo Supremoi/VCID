@@ -14,6 +14,15 @@
           Posted on {{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}
         </small>
       </p>
+      <div>
+        <p>Durchschnittliche Bewertung: {{ post.average_rating() }}</p>
+            {% if current_user.is_authenticated %}
+        <form action="{{ url_for('rate_post', post_id=post.id) }}" method="post">
+            {{ rating_form.hidden_tag() }}
+            {{ rating_form.rating(class="form-control mb-2", id="rating-" ~ post.id) }}
+            <button type="submit" class="btn btn-primary">Bewerten</button>
+        </form>
+        {% endif %}
     </div>
   </div>
   

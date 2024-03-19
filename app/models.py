@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.String(140), default="", nullable=True)  # Optional mit Standardwert ""
     last_seen = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    ratings = db.relationship('Rating', back_populates='user', lazy='dynamic')
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -90,8 +91,13 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Achten Sie auf den korrekten Fremdschlüssel
     content = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=lambda: datetime.now(timezone.utc))
+    ratings = db.relationship('Rating', back_populates='post', lazy='dynamic')
     
         # Repräsentationsmethode
+    def average_rating(self):
+        ratings = self.ratings.with_entities(db.func.avg(Rating.rating).label('average')).first()
+        return round(ratings.average, 2) if ratings.average else None
+
     def __repr__(self):
         return f'<Post {self.id}>'
 
@@ -108,3 +114,15 @@ class Comment(db.Model):
     def __repr__(self):
         return f'<Comment {self.id}>'
     
+
+class Rating(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)  # Bewertung zwischen 1 und 10
+
+    post = db.relationship('Post', back_populates='ratings')
+    user = db.relationship('User', back_populates='ratings')
+
+    def __repr__(self):
+        return f'<Rating {self.rating}>'
