@@ -47,3 +47,6 @@ class RatingForm(FlaskForm):
     rating = IntegerField('Rating', validators=[DataRequired(), NumberRange(min=1, max=10)])
     submit = SubmitField('Submit')
 
+class EmptyForm(FlaskForm):
+    submit = SubmitField('Submit')
+

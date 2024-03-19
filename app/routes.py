@@ -9,9 +9,6 @@ from flask_login import logout_user
 from flask_login import login_required
 
 
-
-
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -105,8 +102,7 @@ def edit_profile():
 def follow(username):
     form = EmptyForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username))
+        user = db.session.scalar(select(User).where(User.username == username))
         if user is None:
             flash(f'User {username} not found.')
             return redirect(url_for('index'))
@@ -126,8 +122,7 @@ def follow(username):
 def unfollow(username):
     form = EmptyForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username))
+        user = db.session.scalar(select(User).where(User.username == username))
         if user is None:
             flash(f'User {username} not found.')
             return redirect(url_for('index'))
