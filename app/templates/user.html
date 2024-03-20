@@ -3,20 +3,27 @@
 {% block content %}
 <div class="container mt-4">
     <div class="row">
+        <!-- Benutzeravatar -->
         <div class="col-md-4">
             <img src="{{ user.avatar(128) }}" class="img-thumbnail">
         </div>
         <div class="col-md-8">
+            <!-- Benutzername -->
             <h1>{{ user.username }}</h1>
+            <!-- Über mich, falls vorhanden -->
             {% if user.about_me %}
                 <p>{{ user.about_me }}</p>
             {% endif %}
+            <!-- Letzte Sichtung, falls vorhanden -->
             {% if user.last_seen %}
                 <p>Last seen on: {{ user.last_seen.strftime('%Y-%m-%d %H:%M') }}</p>
             {% endif %}
+            <!-- Follower und Followings Zähler -->
             <p>{{ user.followers_count() }} followers, {{ user.following_count() }} following.</p>
+            <!-- Profil bearbeiten, falls angemeldeter Benutzer das eigene Profil ansieht -->
             {% if user == current_user %}
                 <p><a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary">Edit your profile</a></p>
+            <!-- Follow/Unfollow Button, abhängig von der Beziehung zum angesehenen Profil -->
             {% elif not current_user.is_following(user) %}
                 <form action="{{ url_for('follow', username=user.username) }}" method="post">
                     {{ form.hidden_tag() }}
@@ -31,10 +38,9 @@
         </div>
     </div>
     <hr>
+    <!-- Schleife durch Posts des Benutzers -->
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
 </div>
 {% endblock %}
-
-

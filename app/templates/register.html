@@ -2,12 +2,17 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Überschrift für die Registrierungsseite -->
     <h1>Register</h1>
+    <!-- Registrierungsformular -->
     <form action="" method="post" class="mt-3">
+        <!-- CSRF-Schutz Token -->
         {{ form.hidden_tag() }}
+        <!-- Benutzername Eingabefeld -->
         <div class="mb-3">
             {{ form.username.label(class="form-label") }}
             {{ form.username(class="form-control", size=32) }}
+            <!-- Anzeige von Validierungsfehlern für Benutzername -->
             {% if form.username.errors %}
                 <div class="invalid-feedback" style="display:block;">
                     {% for error in form.username.errors %}
@@ -16,9 +21,11 @@
                 </div>
             {% endif %}
         </div>
+        <!-- E-Mail Eingabefeld -->
         <div class="mb-3">
             {{ form.email.label(class="form-label") }}
             {{ form.email(class="form-control", size=64) }}
+            <!-- Anzeige von Validierungsfehlern für E-Mail -->
             {% if form.email.errors %}
                 <div class="invalid-feedback" style="display:block;">
                     {% for error in form.email.errors %}
@@ -27,9 +34,11 @@
                 </div>
             {% endif %}
         </div>
+        <!-- Passwort Eingabefeld -->
         <div class="mb-3">
             {{ form.password.label(class="form-label") }}
             {{ form.password(class="form-control", size=32) }}
+            <!-- Anzeige von Validierungsfehlern für Passwort -->
             {% if form.password.errors %}
                 <div class="invalid-feedback" style="display:block;">
                     {% for error in form.password.errors %}
@@ -38,9 +47,11 @@
                 </div>
             {% endif %}
         </div>
+        <!-- Passwort-Wiederholung Eingabefeld -->
         <div class="mb-3">
             {{ form.password2.label(class="form-label") }}
             {{ form.password2(class="form-control", size=32) }}
+            <!-- Anzeige von Validierungsfehlern für Passwort-Wiederholung -->
             {% if form.password2.errors %}
                 <div class="invalid-feedback" style="display:block;">
                     {% for error in form.password2.errors %}
@@ -49,6 +60,7 @@
                 </div>
             {% endif %}
         </div>
+        <!-- Absenden Button -->
         <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
     </form>
 </div>

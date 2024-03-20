@@ -1,28 +1,38 @@
+<!-- Ein "card"-Element, das verwendet wird, um Inhalt in einem Box-Stil anzuzeigen. Es enthält die gesamte Post-Information. -->
 <div class="card mb-3">
-    <div class="card-body">
-      <div class="d-flex align-items-center mb-3">
-        <img src="{{ post.author.avatar(36) }}" class="rounded-circle me-2">
-        <h5 class="card-title mb-0">
-          <a href="{{ url_for('user', username=post.author.username) }}">
-            {{ post.author.username }}
-          </a>
-        </h5>
-      </div>
-      <p class="card-text">{{ post.content }}</p>
-      <p class="card-text">
-        <small class="text-muted">
-          Posted on {{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}
-        </small>
-      </p>
-      <div>
-        <p>Durchschnittliche Bewertung: {{ post.average_rating() }}</p>
-            {% if current_user.is_authenticated %}
-        <form action="{{ url_for('rate_post', post_id=post.id) }}" method="post">
-            {{ rating_form.hidden_tag() }}
-            {{ rating_form.rating(class="form-control mb-2", id="rating-" ~ post.id) }}
-            <button type="submit" class="btn btn-primary">Bewerten</button>
-        </form>
-        {% endif %}
+  <div class="card-body">
+    <!-- Eine flexible Box, die das Avatar und den Benutzernamen des Post-Autors anzeigt. -->
+    <div class="d-flex align-items-center mb-3">
+      <!-- Das Avatar-Bild des Autors. -->
+      <img src="{{ post.author.avatar(36) }}" class="rounded-circle me-2">
+      <!-- Der Benutzername des Autors, verlinkt zu dessen Profilseite. -->
+      <h5 class="card-title mb-0">
+        <a href="{{ url_for('user', username=post.author.username) }}">
+          {{ post.author.username }}
+        </a>
+      </h5>
     </div>
+    <!-- Der Hauptinhalt des Posts. -->
+    <p class="card-text">{{ post.content }}</p>
+    <!-- Das Erstellungsdatum des Posts, in einem kleineren, blasseren Text angezeigt. -->
+    <p class="card-text">
+      <small class="text-muted">
+        Posted on {{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}
+      </small>
+    </p>
+    <!-- Zeigt die durchschnittliche Bewertung des Posts an. -->
+    <div>
+      <p>Durchschnittliche Bewertung: {{ post.average_rating() }}</p>
+          <!-- Ein Formular, das es authentifizierten Benutzern ermöglicht, den Post zu bewerten. Nicht sichtbar für nicht eingeloggte Benutzer. -->
+          {% if current_user.is_authenticated %}
+      <form action="{{ url_for('rate_post', post_id=post.id) }}" method="post">
+          <!-- Ein verstecktes Feld für das Formular. -->
+          {{ rating_form.hidden_tag() }}
+          <!-- Ein Auswahlfeld, um eine Bewertung auszuwählen. -->
+          {{ rating_form.rating(class="form-control mb-2", id="rating-" ~ post.id) }}
+          <!-- Ein Button, um die Bewertung abzusenden. -->
+          <button type="submit" class="btn btn-primary">Bewerten</button>
+      </form>
+      {% endif %}
   </div>
-  
+</div>

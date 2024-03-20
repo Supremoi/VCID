@@ -1,32 +1,32 @@
-{% extends "base.html" %}
+{% extends "base.html" %} <!-- Erweitert base.html, übernimmt dessen Struktur -->
 {% block content %}
 <div class="container mt-4">
-    <h1>Edit Profile</h1>
-    <form action="" method="post" class="mt-3">
-        {{ form.hidden_tag() }}
+    <h1>Edit Profile</h1> <!-- Überschrift für die Seite -->
+    <form action="" method="post" class="mt-3"> <!-- Formular für die Profilbearbeitung, POST-Methode -->
+        {{ form.hidden_tag() }} <!-- CSRF-Token und andere versteckte Felder -->
         <div class="mb-3">
-            {{ form.username.label(class="form-label") }}
-            {{ form.username(class="form-control", size=32) }}
-            {% if form.username.errors %}
-                <div class="invalid-feedback" style="display:block;">
+            {{ form.username.label(class="form-label") }} <!-- Beschriftung für das Benutzernamen-Feld -->
+            {{ form.username(class="form-control", size=32) }} <!-- Eingabefeld für den Benutzernamen -->
+            {% if form.username.errors %} <!-- Prüft, ob es Fehler bei der Benutzernameneingabe gab -->
+                <div class="invalid-feedback" style="display:block;"> <!-- Zeigt Fehlermeldungen an -->
                     {% for error in form.username.errors %}
-                        {{ error }}
+                        {{ error }} <!-- Jede Fehlermeldung wird einzeln aufgeführt -->
                     {% endfor %}
                 </div>
             {% endif %}
         </div>
         <div class="mb-3">
-            {{ form.about_me.label(class="form-label") }}
-            {{ form.about_me(class="form-control", cols=50, rows=4) }}
-            {% if form.about_me.errors %}
-                <div class="invalid-feedback" style="display:block;">
+            {{ form.about_me.label(class="form-label") }} <!-- Beschriftung für das "Über mich"-Feld -->
+            {{ form.about_me(class="form-control", cols=50, rows=4) }} <!-- Textbereich für "Über mich"-Informationen -->
+            {% if form.about_me.errors %} <!-- Prüft, ob es Fehler im "Über mich"-Bereich gab -->
+                <div class="invalid-feedback" style="display:block;"> <!-- Zeigt Fehlermeldungen an -->
                     {% for error in form.about_me.errors %}
-                        {{ error }}
+                        {{ error }} <!-- Jede Fehlermeldung wird einzeln aufgeführt -->
                     {% endfor %}
                 </div>
             {% endif %}
         </div>
-        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button> <!-- Absenden-Button -->
     </form>
 </div>
 {% endblock %}
